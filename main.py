@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 import configparser
 import logging
+import yt_dlp
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,9 +32,9 @@ else:
 
 
 # Commands documentation <https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html>
-bot = commands.Bot(command_prefix=PREFIX)
+client = commands.Bot(command_prefix=PREFIX)
 
-@bot.command(name='about')
+@client.command(name='about')
 async def cmd_about(ctx, *args):
     if len(args) == 0:
         await ctx.send('About (doesn\'t exist yet)')
@@ -43,17 +44,42 @@ async def cmd_about(ctx, *args):
         elif args[0] == 'say':
             await ctx.send('say <message> - Make me say something.')
 
-@bot.command(name='say')
-async def cmd_say(ctx, arg1):
+@client.command(name='say')
+async def cmd_say(ctx, arg1: str):
     await ctx.send(arg1)
 
-@bot.command(name='ping')
+@client.command(name='ping')
 async def cmd_ping(ctx):
     await ctx.send('pong')
+
+# Via <https://www.youtube.com/watch?v=ml-5tXRmmFk>
+# And <https://github.com/RK-Coding/Videos/blob/master/rkcodingmusic.py>
+@client.command(name='play')
+async def cmd_play(ctx, arg1: str):
+    # # voice_channel = discord.utils.get(ctx.guild.voice.channels, name='General')
+    # # voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    # # await voice_channel.connect()
+    if not ctx.message.author.voice:
+        await ctx.send("You are not connected to a voice channel")
+        return
+    
+    # channel = ctx.message.author.voice.channel
+    # server = ctx.message.guild
+    # voice_channel = server.voice_client
+
+    # async with ctx.typing():
+    #     # player = await YTDLSource.from_url(url, loop=client.loop)
+    #     player = await yt_dlp.YoutubeDL..from_url(url, loop=client.loop)
+    #     voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+
+    # await ctx.send('**Now playing:** {}'.format(player.title))
+    voice_client = ctx.voice_client
+    voice_channel = ctx.message.author.voice.channel
+    await voice_channel.connect()
 
 
 
 # Run discord client:
 # client.run(TOKEN)
-bot.run(TOKEN)
+client.run(TOKEN)
 
